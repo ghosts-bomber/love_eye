@@ -1,7 +1,9 @@
+import device from '@system.device';
+
 export default {
     data: {
-        width_: 454,
-        height_: 454,
+        width_: 0,
+        height_: 0,
         running_: false,
         countdown_: 0,
         totalCountdown_: 10,
@@ -11,28 +13,30 @@ export default {
         el_: null,
         currentTime_: '',
         timeIntervalId_: 0,
-        arcVal_:100,
+        arcVal_: 100,
         remainingTime_: '00:00:00',
     },
     startFocus() {
         this.running_ = true;
         this.countdown_ = this.totalCountdown_;
         this.remainingTime_ = this.formatSeconds_(this.countdown_);
-        //this.endTs_ = Date.now() + this.totalCountdown_ * 1000;
-         setTimeout(() => {
-             //this.drawDial(this.totalCountdown_,this.countdown_);
-             this.drawDialTicks();
-         }, 0);
+        this.arcVal_ = 100;
+        this.endTs_ = Date.now() + this.totalCountdown_ * 1000;
+        setTimeout(() => {
+            //this.drawDial(this.totalCountdown_,this.countdown_);
+            this.drawDialTicks();
+        }, 0);
         this.intervalId_ = setInterval(() => {
             this.countdown_--;
-            this.arcVal_ = this.countdown_ / this.totalCountdown_*100;
-            this.remainingTime_ = this.formatSeconds_(this.countdown_);
-            if (this.countdown_ === 0) {
+            if (this.countdown_ < 0) {
                 this.countdown_ = 0;
                 this.arcVal_ = 0;
                 clearInterval(this.intervalId_);
                 this.running_ = false;
+                return;
             }
+            this.arcVal_ = this.countdown_ / this.totalCountdown_ * 100;
+            this.remainingTime_ = this.formatSeconds_(this.countdown_);
         }, 1000);
         // this.animId_ = setInterval(() => {
         //     const now = Date.now();
@@ -42,7 +46,7 @@ export default {
         //     if (remainingMs <= 0) {
         //         if (this.animId_) { clearInterval(this.animId_); this.animId_ = 0; }
         //     }
-        // }, 1000);
+        // }, 30);
     },
     stopFocus() {
         this.running_ = false;
@@ -63,6 +67,15 @@ export default {
         };
         tick();
         this.timeIntervalId_ = setInterval(tick, 1000);
+    },
+    onShow(){
+        device.getInfo({
+            success: (data) => {
+                this.width_ = data.windowWidth;
+                this.height_ = data.windowHeight;
+                console.log(`windowWidth:${this.width_}, windowHeight:${this.height_}`);
+            }
+        });
     },
     formatSeconds_(sec) {
         const s = Math.max(0, Math.floor(sec));
@@ -127,11 +140,11 @@ export default {
         }
         console.log("drawDialTicks end");
     },
-    clearCanvas(){
+    clearCanvas() {
         const el = this.getCanvasEl();
         const ctx = el && el.getContext ? el.getContext("2d", { antialias: true }) : null;
-        if(ctx){
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        if (ctx) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 1)';
             ctx.fillRect(0, 0, this.width_, this.height_);
         }
     },
@@ -163,16 +176,8 @@ export default {
         const radius = Math.min(cx, cy) - padding;
 
         const tickLen = 8;
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.lineWidth = 14;
-        ctx.lineCap = 'butt'
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius - tickLen, 0, 6.28);
-        ctx.stroke();
-        ctx.beginPath();
-            ctx.moveTo(10, 10);
-            ctx.lineTo(280, 160);
-            ctx.stroke();
+
+
         const ratio = Math.max(0, Math.min(1, total > 0 ? remaining / total : 0));
         const alpha = 0.2 + 0.8 * (1 - ratio);
         if (ratio > 0) {
