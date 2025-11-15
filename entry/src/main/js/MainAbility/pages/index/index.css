@@ -4,7 +4,7 @@
   justify-content: center; 
   align-items: center; 
   flex-direction: column; 
-  background-color: aquamarine; 
+  background-color: black;
 }
 .stackContainer {
   width: 100%;
@@ -12,19 +12,18 @@
   background-color: transparent;
 }
 .countdown {
-  top: 40%;
-  left: 35%;
-  height: 15%;
-  width: 30%;
+  top: 45%;
+  left: 25%;
+  height: 10%;
+  width: 50%;
   font-size: 30px;
   text-align: center;
-  color: white;
-  background-color: red;
+  color: #dddddd;
+  background-color: transparent;
 }
 .stop-btn {
   top: 60%;
   left: 30%;
-  transform: translateX(-50%);
   height: 10%;
   width: 40%;
   background-color: red;
@@ -35,7 +34,24 @@
   height: 100%;
   background-color: transparent;
 }
-.progress-arc {
-  width: 100%;
+.progress {
   height: 100%;
+  width: 100%;
+  stroke-width: 12px;
+  padding: 12px;
+  color:rgba(223, 245, 29, 0.8);
+  background-color: rgba(255, 255, 255, 0.3);
+  start-angle: 0;
+  total-angle: 360;
+
+}
+.progressText {
+  top: 24%;
+  left: 25%;
+  height: 8%;
+  width: 50%;
+  font-size: 18px;
+  text-align: center;
+  color: #dddddd;
+  background-color: transparent;
 }
