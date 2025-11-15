@@ -4,7 +4,7 @@ export default {
         height_: 454,
         running_: false,
         countdown_: 0,
-        totalCountdown_: 0,
+        totalCountdown_: 10,
         intervalId_: 0,
         animId_: 0,
         endTs_: 0,
@@ -16,7 +16,6 @@ export default {
     },
     startFocus() {
         this.running_ = true;
-        this.totalCountdown_ = 1200;
         this.countdown_ = this.totalCountdown_;
         this.remainingTime_ = this.formatSeconds_(this.countdown_);
         //this.endTs_ = Date.now() + this.totalCountdown_ * 1000;
@@ -27,8 +26,13 @@ export default {
         this.intervalId_ = setInterval(() => {
             this.countdown_--;
             this.arcVal_ = this.countdown_ / this.totalCountdown_*100;
-            if (this.countdown_ < 0) this.countdown_ = 0;
             this.remainingTime_ = this.formatSeconds_(this.countdown_);
+            if (this.countdown_ === 0) {
+                this.countdown_ = 0;
+                this.arcVal_ = 0;
+                clearInterval(this.intervalId_);
+                this.running_ = false;
+            }
         }, 1000);
         // this.animId_ = setInterval(() => {
         //     const now = Date.now();
