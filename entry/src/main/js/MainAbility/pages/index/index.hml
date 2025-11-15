@@ -1,0 +1,8 @@
+<div class="container">
+    <input if="{{ !running }}" type="button" value="开始" onclick="startFocus()" />
+    <stack if="{{ running }}" class="stackContainer" ref="stack">
+        <canvas id="canvas" ref="canvas1" class="canvas"></canvas>
+        <text if="{{ running }}" class="countdown">{{ countdown }}</text>
+        <input if="{{ running }}" type="button" class="stop-btn" value="停止" onclick="stopFocus()" />
+    </stack>    
+</div>
