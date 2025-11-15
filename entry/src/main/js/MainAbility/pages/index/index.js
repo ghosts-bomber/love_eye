@@ -2,24 +2,30 @@ export default {
     data: {
         running: false,
         countdown: 0,
+        totalCountdown: 0,
         intervalId: 0,
         el: null,
         ctx: null,
+        progressColor: 'rgba(255,221,0,0.2)',
+        progressBgColor: 'rgba(180,180,180,0.25)',
+        progressPercent: 0,
     },
     startFocus() {
         this.running = true;
-        // 开始倒计时
-        this.countdown = 10;
-        // 页面切换到运行态后绘制表盘刻度
+        this.totalCountdown = 10;
+        this.countdown = this.totalCountdown;
         setTimeout(() => {
-            this.drawDialTicks();
+            this.drawDial(this.totalCountdown, this.countdown);
         }, 0);
         this.intervalId = setInterval(() => {
             this.countdown--;
             if (this.countdown <= 0) {
                 clearInterval(this.intervalId);
                 this.running = false;
+                this.drawDial(this.totalCountdown, 0);
+                return;
             }
+            this.drawDial(this.totalCountdown, this.countdown);
         }, 1000);
     },
     stopFocus() {
@@ -35,13 +41,7 @@ export default {
     ,
     // 获取 canvas 元素（通过 $refs.canvas1，避免使用 $element）
     getCanvasEl() {
-        try {
-            const refs = this['$refs'] || {};
-            const el = refs['canvas1'] || null;
-            return el;
-        } catch (e) {
-            return null;
-        }
+        return this.$refs.canvas1 || null;
     },
     // 绘制表盘的刻度（120 个灰色刻度）
     drawDialTicks() {
@@ -52,6 +52,7 @@ export default {
             setTimeout(() => this.drawDialTicks(), 50);
             return;
         }
+        console.log("getCanvasEl");
         const ctx = el && el['getContext'] ? el['getContext']("2d", { antialias: true }) : null;
         if (!ctx) {
             console.log("ctx 为空");
@@ -103,6 +104,94 @@ export default {
             ctx.lineTo(x2, y2);
             ctx.stroke();
         }
+        // 基础满环覆盖上一帧的进度
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = 'rgba(180,180,180,0.25)';
+        ctx.lineWidth = 14;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius - tickLen - 6, -Math.PI / 2, 1.5 * Math.PI, false);
+        ctx.stroke();
         console.log("drawDialTicks end");
+    }
+    ,
+    drawDial(total, remaining) {
+        console.log("drawDial begin");
+        const el = this.getCanvasEl();
+        console.log("getCanvasEl");
+        if (!el) {
+            console.log("el 为空");
+            setTimeout(() => this.drawDial(total, remaining), 50);
+            return;
+        }
+        console.log("getCanvasEl end");
+        const ctx = el && el.getContext ? el.getContext("2d", { antialias: true }) : null;
+        console.log("getContext");
+        if (!ctx) {
+            console.log("ctx 为空");
+            return;
+        }
+        console.log("ctx 不为空");
+        let width = 454;
+        let height = 454;
+
+        console.log(`drawDial width: ${width}, height: ${height}`);
+        width = Math.floor(width);
+        height = Math.floor(height);
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.fillRect(0, 0, width, height);
+        const cx = width / 2;
+        const cy = height / 2;
+        const padding = 12;
+        const radius = Math.min(cx, cy) - padding;
+        const tickCount = 120;
+        const tickLen = 8;
+        ctx.strokeStyle = '#999999';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'butt';
+         
+        for (let i = 0; i < tickCount; i++) {
+            const angle = (i / tickCount) * Math.PI * 2 - Math.PI / 2;
+            const x1 = cx + Math.cos(angle) * radius;
+            const y1 = cy + Math.sin(angle) * radius;
+            const x2 = cx + Math.cos(angle) * (radius - tickLen);
+            const y2 = cy + Math.sin(angle) * (radius - tickLen);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+       
+        const ratio = Math.max(0, Math.min(1, total > 0 ? remaining / total : 0));
+        const percent = Math.round(ratio * 100);
+        this.progressPercent = percent;
+        const alpha = 0.2 + 0.8 * (1 - ratio);
+        this.progressColor = `rgba(255,221,0,${alpha})`;
+        this.progressBgColor = 'rgba(180,180,180,0.25)';
+
+        if (ratio > 0) {
+            const start = -Math.PI / 2;
+            const end = start + ratio * Math.PI * 2;
+            const range = end - start;
+            ctx.lineWidth = 14;
+            ctx.lineCap = 'round';
+            // 分段绘制模拟沿弧线方向颜色渐变（从 #FFDD00 到 #FFAA00）
+            const segments = Math.max(1, Math.floor(60 * ratio));
+            for (let i = 0; i < segments; i++) {
+                const t = segments > 1 ? i / (segments - 1) : 0;
+                const r = 255;
+                const g = Math.round(221 + (170 - 221) * t);
+                const b = 0;
+                ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+                const s = start + (range * i) / segments;
+                const e = start + (range * (i + 1)) / segments;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius - tickLen - 6, s, e, false);
+                ctx.stroke();
+            }
+        }
+        console.log("drawDial end");
+        
+        
     }
 };

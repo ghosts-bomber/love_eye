@@ -2,6 +2,8 @@
     <input if="{{ !running }}" type="button" value="开始" onclick="startFocus()" />
     <stack if="{{ running }}" class="stackContainer" ref="stack">
         <canvas id="canvas" ref="canvas1" class="canvas"></canvas>
+        <progress type="arc" ref="progressArc" class="progress-arc" percent="{{ progressPercent }}"
+                  style="color: {{ progressColor }}; background-color: {{ progressBgColor }}; stroke-width: 14px; start-angle: 270deg; total-angle: 360deg"></progress>
         <text if="{{ running }}" class="countdown">{{ countdown }}</text>
         <input if="{{ running }}" type="button" class="stop-btn" value="停止" onclick="stopFocus()" />
     </stack>    
