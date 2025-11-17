@@ -1,10 +1,11 @@
 <div class="container">
-    <input if="{{ !running_ }}" type="button" value="开始" onclick="startFocus()" />
+    <input if="{{ !running_ }}" class="start-btn" type="button" value="开始" onclick="startFocus()" />
     <stack if="{{ running_ }}" class="stackContainer" ref="stack">
         <canvas id="canvas" ref="canvas1" class="canvas"></canvas>
         <progress id="progress" ref="progress" class="progress" type="arc" percent="{{arcVal_}}"></progress>
         <text id="progressText" ref="progressText" class="progressText">{{ currentTime_ }}</text>
         <text class="countdown">{{ remainingTime_ }}</text>
         <input type="button" class="stop-btn" value="停止" onclick="stopFocus()" />
+
     </stack>    
 </div>

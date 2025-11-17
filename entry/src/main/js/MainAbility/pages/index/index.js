@@ -7,7 +7,7 @@ export default {
         height_: 0,
         running_: false,
         countdown_: 0,
-        totalCountdown_: 12,
+        totalCountdown_: 1200,
         intervalId_: 0,
         animId_: 0,
         endTs_: 0,
@@ -23,18 +23,13 @@ export default {
         this.remainingTime_ = this.formatSeconds_(this.countdown_);
         this.arcVal_ = 100;
         this.endTs_ = Date.now() + this.totalCountdown_ * 1000;
-        setTimeout(() => {
-            //this.drawDial(this.totalCountdown_,this.countdown_);
-            this.drawDialTicks();
-        }, 0);
+        // setTimeout(() => {
+        //     this.drawDialTicks();
+        // }, 0);
         this.intervalId_ = setInterval(() => {
             this.countdown_--;
             if (this.countdown_ < 0) {
-                this.countdown_ = 0;
-                this.arcVal_ = 0;
-                clearInterval(this.intervalId_);
-                this.vibrate_();
-                this.running_ = false;
+                this.stopFocus();   
                 return;
             }
             this.arcVal_ = this.countdown_ / this.totalCountdown_ * 100;
@@ -51,13 +46,13 @@ export default {
         // }, 30);
     },
     stopFocus() {
-        this.running_ = false;
         // 清除倒计时
         clearInterval(this.intervalId_);
         if (this.animId_) { clearInterval(this.animId_); this.animId_ = 0; }
         this.countdown_ = 0;
         this.remainingTime_ = '00:00:00';
         this.vibrate_();
+        this.running_ = false;
     },
     onInit() {
         const fmt = (n) => (n < 10 ? '0' + n : '' + n);
@@ -92,7 +87,7 @@ export default {
         try {
             if (vibrator && vibrator.vibrate) {
                 console.log("vibrate");
-                vibrator.vibrate({ mode: 'short' });
+                vibrator.vibrate({ mode: 'long' });
             }
         } catch (e) {}
     },
