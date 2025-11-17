@@ -1,4 +1,5 @@
 import device from '@system.device';
+import vibrator from '@system.vibrator';
 
 export default {
     data: {
@@ -6,7 +7,7 @@ export default {
         height_: 0,
         running_: false,
         countdown_: 0,
-        totalCountdown_: 10,
+        totalCountdown_: 12,
         intervalId_: 0,
         animId_: 0,
         endTs_: 0,
@@ -32,6 +33,7 @@ export default {
                 this.countdown_ = 0;
                 this.arcVal_ = 0;
                 clearInterval(this.intervalId_);
+                this.vibrate_();
                 this.running_ = false;
                 return;
             }
@@ -55,6 +57,7 @@ export default {
         if (this.animId_) { clearInterval(this.animId_); this.animId_ = 0; }
         this.countdown_ = 0;
         this.remainingTime_ = '00:00:00';
+        this.vibrate_();
     },
     onInit() {
         const fmt = (n) => (n < 10 ? '0' + n : '' + n);
@@ -84,6 +87,14 @@ export default {
         const ss = s % 60;
         const pad = (n) => (n < 10 ? '0' + n : '' + n);
         return `${pad(h)}:${pad(m)}:${pad(ss)}`;
+    },
+    vibrate_() {
+        try {
+            if (vibrator && vibrator.vibrate) {
+                console.log("vibrate");
+                vibrator.vibrate({ mode: 'short' });
+            }
+        } catch (e) {}
     },
     // 获取 canvas 元素（通过 $refs.canvas1，避免使用 $element）
     getCanvasEl() {

@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.example.loveeye",
+    "bundleName": "loveeye.mxy.y",
     "vendor": "example",
     "version": {
       "code": 1000000,
@@ -17,24 +17,54 @@
       "moduleName": "entry",
       "moduleType": "entry"
     },
-    "abilities": [
+    "reqPermissions": [
       {
-        "name": ".MainAbility",
-        "srcLanguage": "js",
-        "srcPath": "MainAbility",
-        "icon": "$media:icon",
-        "description": "$string:MainAbility_desc",
-        "label": "$string:MainAbility_label",
-        "type": "page"
+        "name": "ohos.permission.ACCELEROMETER",
+        "reason": "",
+        "usedScene": {
+          "ability":[".MainAbility"],
+        "when": "inuse"
       }
-    ],
-    "js": [
-      {
-        "pages": [
-          "pages/index/index"
+    },
+    {
+      "name": "ohos.permission.VIBRATE",
+      "reason": "",
+      "usedScene": {
+        "ability": [
+          ".MainAbility"
         ],
-        "name": ".MainAbility"
+        "when": "inuse"
       }
-    ]
-  }
+    },
+    {
+      "name": "ohos.permission.ACTIVITY_MOTION",
+      "reason": "",
+      "usedScene": {
+        "ability": [
+          ".MainAbility"
+        ],
+        "when": "inuse"
+      }
+    }
+  ],
+    "abilities": [
+    {
+      "name": ".MainAbility",
+      "srcLanguage": "js",
+      "srcPath": "MainAbility",
+      "icon": "$media:icon",
+      "description": "$string:MainAbility_desc",
+      "label": "$string:MainAbility_label",
+      "type": "page"
+    }
+  ],
+  "js": [
+    {
+      "pages": [
+        "pages/index/index"
+      ],
+      "name": ".MainAbility"
+    }
+  ]
+}
 }
